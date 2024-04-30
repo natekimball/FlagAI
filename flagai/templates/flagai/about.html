@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Page</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(-45deg, #e4efe9, #869ac7);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+            height: 100vh;
+        }
+
+
+        @keyframes gradient {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+         /*typewriter effect*/
+        @keyframes typing {
+            from{
+                width: 0%;
+            }
+            to{
+                width: 100%;
+            }
+        }
+
+        @keyframes blink {
+            0%, 50%{
+                border-color: transparent;
+            }
+            51%, 100%{border-color: black}
+        }
+
+
+        /* Additional CSS styles for text */
+        h1, h4, h5 {
+            color: #000000; /* White text color */
+            text-align: center; /* Center align */
+            margin: 20px 0; /* Top and bottom margin */
+        }
+
+
+    </style>
+</head>
+<body>
+{% if user.is_authenticated %}
+{% include 'flagai/navbar.html' %}
+<div class="container-fluid justify-content-center align-items-center" style="height: 80vh; padding: 5vw">
+    <div class="text-center mx-auto mt-5" style="width: 295px;">
+        <h1 class="typewriter-text" style="font-family: 'Courier New', sans-serif; overflow: hidden; white-space: nowrap; animation: typing 1.5s steps(12, end), blink 0.75s step-end infinite; border-right: 4px solid black; display: inline-block;">Our Mission</h1>
+    </div>
+    <div class="mt-5">
+        <h4 style="line-height: 30px;">FlagAI is dedicated to <span style="color: white;font-weight: bold; text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;">empowering users</span>
+            to <span style="color: white;font-weight: bold; text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;">report</span>
+            instances of <span style="color: white;font-weight: bold; text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;">AI bias</span>,
+            thereby enabling AI developers to address and <span style="color: white;font-weight: bold; text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;">mitigate bias</span> effectively.
+            By facilitating <span style="color: white;font-weight: bold; text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;">open communication</span>, we <span style="color: white;font-weight: bold; text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;">foster equal oportunities</span> and
+            treatment for all.
+        </h4>
+    </div>
+    <div class="mt-5">
+        <h5 style="line-height: 30px;">We recognize the importance of every reported incident and are committed to thoroughly investigating and addressing each case. By leveraging the collective insights and experiences of our users, we aim to raise awareness, promote dialogue, and drive positive change in the AI landscape. Together, we can build AI systems that are not only technologically advanced but also ethical, unbiased, and equitable for all. Join us in our mission to create a more just and inclusive future with FlagAI.</h5>
+    </div>
+    </div>
+</div>
+
+
+{% else %}
+        <!-- Redirect to login if user is not authenticated -->
+        <script>window.location.href = "{% url 'flagai:login' %}";</script>
+{% endif %}
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

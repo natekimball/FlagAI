@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .readonly-field {
+          background-color: #f8f9fa;
+          border: none;
+          border-radius: 0 5px 5px 0;
+        }
+        body {
+            background: linear-gradient(-45deg, #e4efe9, #869ac7);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+            height: 100vh;
+        }
+
+
+        @keyframes gradient {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+  </style>
+</head>
+
+<body>
+    {% if user.is_authenticated %}
+    {% include 'flagai/navbar.html' %}
+    <div class="container d-flex justify-content-center mt-4">
+        <div class="card w-50">
+             <div class="card-header">
+                User Profile
+            </div>
+            <div class="card-body p-4">
+                <div class="d-flex align-items-center mb-4">
+                    <label for="fullName" class="label w-25 mr-5 mb-0">Full Name</label>
+                    <input type="text" class="form-control readonly-field" id="fullName" value="{{ user.get_full_name }}" readonly>
+                </div>
+                <div class="d-flex align-items-center mb-4">
+                    <label for="email" class="label w-25 mr-5 mb-0">Email</label>
+                    <input type="email" class="form-control readonly-field" id="email" value="{{ user.email }}" readonly>
+                </div>
+                <div class="d-flex align-items-center mb-4">
+                    <label for="user_common_status" class="label w-25 mr-5 mb-0">User Status</label>
+                    <input type="email" class="form-control readonly-field" id="user_common_status"
+                           value="{% if is_user_admin %}
+                                    Site Admin
+                                  {% elif is_user_anonymous %}
+                                    Anonymous User
+                                  {% else %}
+                                    Common User
+                                  {% endif %}"
+                           readonly>
+                </div>
+                <div class="d-flex align-items-center mb-4">
+                    <label for="join_date" 
+                        class="label w-25 mr-5 mb-0"
+                        >Date Joined</label>
+                    <input type="email" 
+                           class="form-control readonly-field" 
+                           id="join_date" 
+                           value="{% if is_user_anonymous %}
+                                  {% else %}
+                                        {{ user.date_joined|date:'m/d/Y' }}
+                                  {% endif %}"
+                    readonly>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% else %}
+        <!-- Redirect to login if user is not authenticated -->
+        <script>window.location.href = "{% url 'flagai:login' %}";</script>
+    {% endif %}
+
+    <!-- Original Bootstrap JS and Popper.js -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

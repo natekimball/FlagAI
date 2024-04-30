@@ -1,0 +1,21 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+
+        <a class="navbar-brand" href="/">FlagAI</a>
+        {% if not is_user_anonymous %}
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="navbar-nav me-auto">
+                <a class="nav-link" href="/profile">Profile</a>
+                <a class="nav-link fs-4" href="/about">About</a>
+            </div>
+        </div>
+        {% endif %}
+        <div class="d-flex">
+            <a class="btn btn-danger" href="{% url 'flagai:logout' %}">Logout</a>
+        </div>
+    </div>
+</nav>
+
+<footer class="navbar fixed-bottom navbar-expand-lg navbar-light bg-light text-center">
+    <div class="w-100">FlagAI. This system is a class project, the system is not monitored, and no real information should be submitted.</div>
+</footer>

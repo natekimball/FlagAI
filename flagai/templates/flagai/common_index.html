@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body{
+            background: linear-gradient(-45deg, #e4efe9, #869ac7);
+            background-size: 400% 400%;
+            height: 100vh;
+        }
+
+        @keyframes gradient {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+         @keyframes typing {
+            from{
+                width: 0%;
+            }
+            to{
+                width: 100%;
+            }
+        }
+
+        @keyframes blink {
+            0%, 50%{
+                border-color: transparent;
+            }
+            51%, 100%{border-color: black}
+        }
+
+    </style>
+</head>
+{% if user.username == 'admin' %}
+    <script>window.location.href = "/admin/";</script>
+{% elif user.username == 'anonymous' %}
+    <script>window.location.href = "{% url 'flagai:create_report' %}";</script>
+{% else %}
+    {% include 'flagai/navbar.html' %}
+    {% if not is_user_anonymous %}
+        <div class="container mt-4 pb-4">
+            <h1 id="welcome-text" style="font-family: 'Courier New', sans-serif; overflow: hidden; white-space: nowrap;  display: inline-block; animation: typing 5s steps(12, end), blink 0.75s step-end infinite;">Welcome, <span id="first-name-placeholder"></span>!</h1>
+            <script>
+                // Replace "First Name" with the actual first name of the user
+    var firstName = "{{ user.first_name }}"; // Example first name
+    document.getElementById("first-name-placeholder").innerText = firstName;
+
+    // Calculate animation duration based on the length of the first name
+    var animationDuration = firstName.length * 0.5; // Adjust the multiplier as needed
+    var stepDuration = animationDuration / firstName.length; // Calculate duration for each step
+
+   // Generate keyframes dynamically for each character with the correct timing
+var keyframes = "";
+for (var i = 0; i <= firstName.length; i++) {
+    keyframes += (i / firstName.length * 100) + "% { width: " + (i * 100 / firstName.length) + "%; }\n";
+}
+
+// Apply the animation with the calculated keyframes and step duration
+var style = document.createElement('style');
+style.innerHTML = "@keyframes typing { " + keyframes + " }\n";
+style.innerHTML += "h1#welcome-text { animation: typing " + animationDuration + "s steps(" + firstName.length + ", end) " + stepDuration + "s forwards; }\n"; // Include step duration
+document.head.appendChild(style);
+            </script>
+            <h2>My Reports</h2>
+            {% if user_reports %}
+                <div class="d-flex flex-column justify-content-center w-100 h-100 mt-4">
+                <div class="row">
+                    {% for report in user_reports %}
+                        <div class="col-12 col-md-6 col-lg-4 mb-4 px-2">
+                            <div class="card h-100">
+                                <div class="card-body text-center">
+                                    <div class="dropdown d-flex justify-content-end">
+                                      <button class="btn rounded-circle" type="button" id="dropdownMenuButton" data-toggle="dropdown" style="width: 30px; height: 30px;">
+                                          &vellip;
+                                      </button>
+                                      <div class="dropdown-menu dropdown-menu-right">
+                                        <a class="dropdown-item" href="{% url 'flagai:delete_report' report.id %}">Delete Report</a>
+                                      </div>
+                                    </div>
+                                    {% if report.files.all|length > 0 %}
+                                    <div class="mt-2" style="display: flex; justify-content: center; align-items: center; margin-bottom: 10px; border-radius: 15px;">
+                                        <div id="reportFilesCarousel_{{report.id}}" class="carousel slide" data-ride="carousel">
+                                            <div class="carousel-inner">
+                                                {% for file in report.files.all %}
+                                                <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                                                    <embed src="{{ s3_base_url }}/{{ file.file }}" height="250rem" style="width: 100%;"/>
+                                                </div>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% else %}
+                                    <div class="d-flex justify-content-center align-items-center border w-100 mt-2 bg-light mb-2" style="height: 257px; border-radius: 15px;">
+                                        <h5>No File Submitted</h5>
+                                    </div>
+                                    {% endif %}
+                                    {% if report.files.all|length > 1 %}
+                                    <div class="report-description px-3 py-2" style="display: flex; justify-content: center; background-color: #eeeded; border-radius: 10px; margin-bottom: 10px; justify-content: space-between;">
+                                        <a class="" href="#reportFilesCarousel_{{report.id}}" role="button" data-slide="prev">
+                                            <span class="carousel-control-prev-icon" aria-hidden="true" style="color: black;"></span>
+                                            <span class="sr-only">Previous</span>
+                                        </a>
+                                        <a class="" href="#reportFilesCarousel_{{report.id}}" role="button" data-slide="next">
+                                            <span class="carousel-control-next-icon" aria-hidden="true" style="color: black;"></span>
+                                            <span class="sr-only">Next</span>
+                                        </a>
+                                    </div>
+                                    {% else %}
+                                    <div style="height: 3.2rem;"></div>
+                                    {% endif %}
+                                    <div class="report-description" style="display: flex; justify-content: center; margin-bottom: 20px; background-color: #eeeded; padding:10px; border-radius: 10px; height: {% if report.file %}100px{% else %}200px{% endif %}; margin-bottom: 5px; overflow-y: auto;">
+                                        <p class="card-text"><strong>Description: </strong> {{ report.description }}</p>
+                                    </div>
+                                    <div class="report-progress" style="position: relative; margin-bottom: 20px; margin-top: 20px;">
+                                        <div class="progress-status" style="position: relative; width: 100%; top: 0; display: flex; justify-content: center; align-items: center;">
+                                            <strong>Status </strong>: {{ report.status }}
+                                        </div>
+                                            <div class="progress" style="height: 30px; border-radius: 30px; background-color: #ddd;"> <!-- Added a light background color to make the progress more visible -->
+                                                <div class="progress-bar {% if report.status == 'New Report' %}bg-danger{% elif report.status == 'In Progress' %}bg-warning{% elif report.status == 'Resolved' %}bg-success{% endif %}"
+                                                     role="progressbar"
+                                                     style="width: {% if report.status == 'New Report' %}33{% elif report.status == 'In Progress' %}66{% elif report.status == 'Resolved' %}100{% endif %}%;"
+                                                     aria-valuenow="{% if report.status == 'New Report' %}33{% elif report.status == 'In Progress' %}66{% elif report.status == 'Resolved' %}100{% endif %}"
+                                                     aria-valuemin="0" aria-valuemax="100">
+                                                </div>
+                                            </div>
+                                    </div>
+                                    {% if report.feedback != '' %}
+                                        <div class="report-feedback alert alert-success" role="alert" style="border-radius: 30px;" style="display: flex;align-content: space-around;flex-wrap: nowrap;justify-content: space-evenly;">
+                                            <strong>Feedback:</strong> {{ report.feedback }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div class="card-footer text-center text-muted">
+                                    <strong>Submitted on:</strong> {{ report.date_uploaded_or_edited }}
+                                </div>
+
+                            </div>
+                        </div>
+                {% endfor %}
+                </div>
+            {% else %}
+                <p>No reports to show.</p>
+            {% endif %}
+        </div>
+    {% endif %}
+
+    <!-- Floating Create Report Button -->
+    <a href="{% url 'flagai:create_report' %}" class="btn btn-primary" style="position: fixed; bottom: 50px; right: 20px; z-index: 100;">Create Report</a>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+{% endif %}
+</div>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Report</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body{
+            background: linear-gradient(-45deg, #e4efe9, #869ac7);
+            background-size: 400% 400%;
+            height: 100vh;
+        }
+    </style>
+</head>
+<body>
+    {% include 'flagai/navbar.html' %}
+    <div class="container mt-4" style="padding-bottom: 4rem">
+        <div class="card p-4">
+            <h2>Create a New Report</h2>
+            <p class="mb-4"><i>You will receive email notifcation updates about your report.</i></p>
+            <form method="post" enctype="multipart/form-data" action="">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="description" class="form-label">Description<span class="text-danger">*</span></label>
+                    <textarea class="form-control" id="description" name="description" required></textarea>
+                </div>
+                <div class="mb-3">
+                    <label for="offender_link" class="form-label">Offender Program/Website Link<span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="offender_link" name="offender_link" required>
+                </div>
+                <div class="mb-3">
+                    <label for="people_involved" class="form-label">People Involved<span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="people_involved" name="people_involved">
+                </div>
+                <div class="mb-3">
+                    <label for="contact_email" class="form-label">Contact Email</label>
+                    <input type="email" class="form-control" id="contact_email" name="contact_email">
+                </div>
+                <div class="mb-3">
+                    <label for="file_uploads" class="form-label">File Uploads</label>
+                    <input type="file" class="form-control-file" id="file_uploads" name="file_uploads" multiple accept=".txt, .jpg, .pdf">
+                </div>
+                <button type="submit" class="btn btn-primary">Submit Report</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

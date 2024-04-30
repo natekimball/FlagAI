@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <!-- Original Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+
+        @keyframes gradient {
+            0% {
+                background-position: 0% 70%;
+            }
+            50% {
+                background-position: 100% 20%;
+            }
+            100% {
+                background-position: 0% 70%;
+            }
+        }
+        .test{
+            background: linear-gradient(-45deg, #e4efe9, #869ac7);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+
+            height: 100vh;
+        }
+    </style>
+</head>
+<body>
+<div id="grad">
+{% if user.is_authenticated %}
+    {% if user.username == 'admin' %}
+        <!-- Redirect admin user directly to Django admin console -->
+        <script>window.location.href = "/admin/";</script>
+    {% else %}
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">FlagAI</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <div class="navbar-nav me-auto">
+                    <a class="nav-link active" href="/">Home</a>
+                    <a class="nav-link" href="/profile">Profile</a>
+                </div>
+            </div>
+            <div class="d-flex">
+                <a class="btn btn-danger" href="{% url 'flagai:logout' %}">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="test container mt-4">
+        <h1>Welcome, {{ user.username }}!</h1>
+        {% if is_user_admin %}
+            <p>You have admin access.</p>
+        {% elif not is_user_anonymous %}
+            <p>You are a regular user.</p>
+        {% else %}
+            <p>You are an anonymous user.</p>
+        {% endif %}
+
+    <h2>Create Report</h2>
+    <form method="post" enctype="multipart/form-data" action="{% url 'flagai:create_report' %}">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="file_upload" class="form-label">File Upload(Optional)</label>
+            <input style="height: 150%" type="file" class="form-control" id="file_upload" name="file_upload">
+        </div>
+        <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <textarea style="height: 250px" class="form-control" id="description" name="description" required></textarea>
+        </div>
+        <div class="mb-3">
+            <label for="offender_link" class="form-label">Offender Program/Website Link</label>
+            <input type="text" class="form-control" id="offender_link" name="offender_link"  required>
+        </div>
+        <div class="mb-3">
+            <label for="people_involved" class="form-label">People Involved</label>
+            <input type="text" class="form-control" id="people_involved" name="people_involved">
+        </div>
+        <div class="mb-3">
+            <label for="contact_email" class="form-label">Contact Email</label>
+            <input type="email" class="form-control" id="contact_email" name="contact_email" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit Report</button>
+    </form>
+
+    {% if not is_user_anonymous %}
+    <div style="padding: 10%;" class="container-fluid mb-1">
+        <h2>Recent Reports</h2>
+        {% if reports %}
+            <div class="row">
+                {% for report in reports %}
+                    <div class="col-12 col-md-6 col-lg-4 mb-4 px-2">
+                        <div class="card h-100 rounded-lg">
+                            {% if report.is_image %}
+                                <div class="p-1">
+                                    <img src="{{ report.s3_link }}" class="card-img-top img-fluid" alt="Preview" style="border-radius: 40px; width: 100%; height: auto; padding: 3%;">
+                                </div>
+                            {% else %}
+                                <div class="card-img-top text-center p-1" style="font-size: 200px;">📄</div>
+                            {% endif %}
+                            <div class="card-body">
+                                <h5 class="card-title text-center">{{ report.title }}</h5>
+                                <p class="card-text">{{ report.description }}</p>
+                                <div class="text-center mb-2">
+                                    {% if report.user %}
+                                        <small>Submitted by: {{ report.user.username }}</small>
+                                    {% else %}
+                                        <small>Submitted anonymously</small>
+                                    {% endif %}
+                                </div>
+                                <div class="text-center">
+                                    <a href="{% url 'flagai:download_file' report.file.id %}" class="btn btn-primary">Download File</a>
+                                </div>
+                            </div>
+                            <div class="card-footer text-muted text-center">
+                                {{ report.date_uploaded_or_edited }}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>No reports to show.</p>
+        {% endif %}
+    {% endif %}
+    </div>
+    {% endif %}
+{% else %}
+    <!-- Redirect to login if user is not authenticated -->
+    <script>window.location.href = "{% url 'flagai:login' %}";</script>
+{% endif %}
+
+<!-- Original Bootstrap JS and Popper.js -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    </div>
+</div>
+</body>
+</html>
